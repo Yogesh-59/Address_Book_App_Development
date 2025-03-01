@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Address Book App</title>
+  <style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        text-align: center;
+    }
+    form {
+        width: 300px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+    }
+    input {
+        width: 90%;
+        padding: 8px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    button {
+        width: 100%;
+        padding: 10px;
+        background-color: blue;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: darkblue;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Address Book - Add Contact</h2>
+
+<form id="contactForm">
+  <label>Name:</label><br>
+  <input type="text" id="name" required><br>
+
+  <label>Phone:</label><br>
+  <input type="text" id="phone" required><br>
+
+  <label>Email:</label><br>
+  <input type="email" id="email" required><br>
+
+  <button type="submit">Save Contact</button>
+</form>
+
+<script>
+  document.getElementById("contactForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      let contact = {
+          name: document.getElementById("name").value,
+          phone: document.getElementById("phone").value,
+          email: document.getElementById("email").value
+      };
+
+      fetch("http://localhost:8080/addressbook/post", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json"
+          },
+          body: JSON.stringify(contact)
+      })
+      .then(response => response.json())
+      .then(data => alert("Contact Saved: " + JSON.stringify(data)))
+      .catch(error => console.error("Error:", error));
+  });
+</script>
+
+</body>
+</html>
