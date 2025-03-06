@@ -32,20 +32,29 @@ public class AddressController {
 
     // Get contact by ID
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<AddressModel>> getContactById(@PathVariable Long id) {
-        return ResponseEntity.ok(addressService.getContactById(id));
+    public ResponseEntity<?> getContactById(@PathVariable Long id) {
+        Optional<AddressModel> contact = addressService.getContactById(id);
+        return contact.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     // Update contact by ID
     @PutMapping("/update/{id}")
-    public ResponseEntity<AddressModel> updateContact(@PathVariable Long id, @Valid @RequestBody AddressDTO contactDTO) {
-        return ResponseEntity.ok(addressService.updateContact(id, contactDTO));
+    public ResponseEntity<?> updateContact(@PathVariable Long id, @Valid @RequestBody AddressDTO contactDTO) {
+        try {
+            AddressModel updatedContact = addressService.updateContact(id, contactDTO);
+            return ResponseEntity.ok(updatedContact);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     // Delete contact by ID
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteContact(@PathVariable Long id) {
-        addressService.deleteContact(id);
-        return ResponseEntity.ok("Contact deleted successfully.");
+        if (addressService.deleteContact(id)) {
+            return ResponseEntity.ok("Contact deleted successfully.");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
