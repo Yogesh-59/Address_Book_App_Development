@@ -11,7 +11,6 @@ import java.util.Optional;
 
 @Service
 public class AddressService {
-
     @Autowired
     private AddressRepository addressRepository;
 
@@ -30,25 +29,22 @@ public class AddressService {
         return addressRepository.findAll();
     }
 
-    // Get a contact by ID
+    // Get contact by ID
     public Optional<AddressModel> getContactById(Long id) {
         return addressRepository.findById(id);
     }
 
-    // Update a contact
+    // Update contact by ID
     public AddressModel updateContact(Long id, AddressDTO contactDTO) {
-        Optional<AddressModel> existingContact = addressRepository.findById(id);
-        if (existingContact.isPresent()) {
-            AddressModel contact = existingContact.get();
-            contact.setName(contactDTO.getName());
-            contact.setPhone(contactDTO.getPhone());
-            contact.setEmail(contactDTO.getEmail());
-            return addressRepository.save(contact);
-        }
-        return null; // Contact not found
+        AddressModel contact = addressRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Contact not found!"));
+        contact.setName(contactDTO.getName());
+        contact.setPhone(contactDTO.getPhone());
+        contact.setEmail(contactDTO.getEmail());
+        return addressRepository.save(contact);
     }
 
-    // Delete a contact
+    // Delete contact by ID
     public void deleteContact(Long id) {
         addressRepository.deleteById(id);
     }

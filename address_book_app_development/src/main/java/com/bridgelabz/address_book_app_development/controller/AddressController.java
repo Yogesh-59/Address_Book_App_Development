@@ -15,42 +15,37 @@ import java.util.Optional;
 @RequestMapping("/addressbook")
 @CrossOrigin(origins = "*")
 public class AddressController {
-
     @Autowired
-    private AddressService contactService;
+    private AddressService addressService;
 
-    // POST - Add a new contact
-    @PostMapping("/post")
+    // Create a new contact
+    @PostMapping("/add")
     public ResponseEntity<AddressModel> addContact(@Valid @RequestBody AddressDTO contactDTO) {
-        AddressModel savedContact = contactService.addContact(contactDTO);
-        return ResponseEntity.ok(savedContact);
+        return ResponseEntity.ok(addressService.addContact(contactDTO));
     }
 
-    // GET - Retrieve all contacts
-    @GetMapping("/getAll")
+    // Get all contacts
+    @GetMapping("/all")
     public ResponseEntity<List<AddressModel>> getAllContacts() {
-        return ResponseEntity.ok(contactService.getAllContacts());
+        return ResponseEntity.ok(addressService.getAllContacts());
     }
 
-    // GET - Retrieve a contact by ID
-    @GetMapping("/get/{id}")
-    public ResponseEntity<AddressModel> getContactById(@PathVariable Long id) {
-        Optional<AddressModel> contact = contactService.getContactById(id);
-        return contact.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    // Get contact by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Optional<AddressModel>> getContactById(@PathVariable Long id) {
+        return ResponseEntity.ok(addressService.getContactById(id));
     }
 
-    // PUT - Update an existing contact by ID
+    // Update contact by ID
     @PutMapping("/update/{id}")
     public ResponseEntity<AddressModel> updateContact(@PathVariable Long id, @Valid @RequestBody AddressDTO contactDTO) {
-        AddressModel updatedContact = contactService.updateContact(id, contactDTO);
-        return updatedContact != null ? ResponseEntity.ok(updatedContact) : ResponseEntity.notFound().build();
+        return ResponseEntity.ok(addressService.updateContact(id, contactDTO));
     }
 
-    // DELETE - Remove a contact by ID
+    // Delete contact by ID
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteContact(@PathVariable Long id) {
-        contactService.deleteContact(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<String> deleteContact(@PathVariable Long id) {
+        addressService.deleteContact(id);
+        return ResponseEntity.ok("Contact deleted successfully.");
     }
 }
